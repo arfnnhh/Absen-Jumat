@@ -82,7 +82,7 @@ if (isset($_POST['search_button'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Dashboard</title>
+    <title>Update</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
 </head>
@@ -102,10 +102,9 @@ if (isset($_POST['search_button'])) {
         <button type="submit" name="search_button" class="bg-blue-700 text-white rounded-md p-2">Cari</button>
     </form>
     <?php if ($userLevel == 2 || $userLevel == 3) {
-        echo '<a href="update.php" class="mb-3 focus:outline-none ml-7 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Update</a>';
+        echo '<a href="dashboard.php" class="mb-3 focus:outline-none ml-7 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Absen</a>';
     }?>
 </div>
-
 
 <div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative w-full max-w-2xl max-h-full">
@@ -194,87 +193,42 @@ if (isset($_POST['search_button'])) {
     </thead>
     <tbody>
     <?php
-    echo '<form action="add.php" method="POST">';
+    echo '<form action="updateFunc.php" method="POST">';
     while ($row = $result->fetch_assoc()) {
+        $tanggalQuery = "SELECT tanggal FROM rekap WHERE nis = '" . $row['nis'] . "'";
+        $tanggalResult = $conn->query($tanggalQuery);
+
+        if ($tanggalResult->num_rows === 1) {
+            $tanggalRow = $tanggalResult->fetch_assoc();
+            $tanggal = $tanggalRow['tanggal'];
+        } else {
+            $tanggal = "";
+        }
+
         echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">';
         echo '<td class="px-6 py-4"><input type="text" name="nama[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['nama'] . '"/></td>';
         echo '<td class="px-6 py-4"><input type="number" name="nis[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['nis'] . '"/></td>';
         echo '<td class="px-6 py-4"><input type="text" name="rombel[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['rombel'] . '"/></td>';
         echo '<td class="px-6 py-4"><input type="text" name="rayon[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['rayon'] . '"/></td>';
+        echo '<input type="hidden" name="tanggal[' . $row['nis'] . ']" id="tanggal" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $tanggal . '"/>';
         echo '<td class="px-6 py-4">';
         echo '<div class="flex items-center h-5">';
 
-        $hadirChecked = ($row['status'] === 'Hadir') ? 'checked' : '';
-        $tidakHadirChecked = ($row['status'] === 'Tidak Hadir') ? 'checked' : '';
+        $hadirChecked = ($row['status'] === 'hadir') ? 'checked' : '';
+        $tidakHadirChecked = ($row['status'] === 'tidak-hadir') ? 'checked' : '';
 
-        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="Hadir" class="w-4 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $hadirChecked . '> Hadir';
-        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="Tidak Hadir" class="w-4 ml-5 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $tidakHadirChecked . '> Tidak Hadir';
+        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="hadir" class="w-4 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $hadirChecked . '> Hadir';
+        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="tidak-hadir" class="w-4 ml-5 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $tidakHadirChecked . '> Tidak Hadir';
         echo '</div>';
         echo '</td>';
         echo '</tr>';
     }
     ?>
-    <input type="submit" class="text-white ml-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" required value="Cetak Rekap">
+    <input type="submit" class="text-white ml-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" required value="Perbarui">
     </form>
     </tbody>
 </table>
-<?php } else {?>
-    <table class="w-full text-s text-left text-gray-600 dark:text-gray-400 table auto">
-        <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
-        <tr>
-            <th scope="col" class="px-6 py-3">
-                Name
-            </th>
-            <th scope="col" class="px-6 py-3">
-                NIS
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Rayon
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Rombel
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Kehadiran
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        while ($row = $rekapResult->fetch_assoc()) {
-            echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">';
-            echo '<td class="px-6 py-4">' . $row['nama'] . '</td>';
-            echo '<td class="px-6 py-4">' . $row['nis'] . '</td>';
-            echo '<td class="px-6 py-4">' . $row['rayon'] . '</td>';
-            echo '<td class="px-6 py-4">' . $row['rombel'] . '</td>';
-            echo '<td class="px-6 py-4">' . $row['status'] . '</td>';
-            echo '</tr>';
-        }
-        ?>
-        </tbody>
-    </table>
 <?php } ?>
-<?php
-if (isset($_SESSION['success_message'])) {
-    echo '
-<div id="alert-1" class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-  <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-  </svg>
-  <span class="sr-only">Info</span>
-  <div class="ml-3 text-sm font-medium">
-    Data berhasil di Update!
-  </div>
-    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
-      <span class="sr-only">Close</span>
-      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-      </svg>
-  </button>
-</div>';
-    unset($_SESSION['success_message']);
-}
-?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </body>
 </html>
