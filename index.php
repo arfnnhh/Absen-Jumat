@@ -36,12 +36,15 @@ body{
     justify-content:center;
     align-items:center;
     min-height:90vh;
+    margin-right: 2rem;
 }
 .container{
     width:350px;
     display:flex;
     flex-direction:column;
-    padding:0 15px 0 15px;
+    padding:0 15px 15px 15px;
+    /* border: 1px black solid;
+    border-radius: 10px; */
 }
 header{
     color:#fff;
@@ -49,6 +52,7 @@ header{
     display:flex;
     justify-content:center;
     padding:10px 0 10px 0;
+    margin-right: 1rem;
 }
 .input-field{
     display:flex;
