@@ -6,7 +6,6 @@ $dbUsername = 'root';
 $dbPassword = '';
 $dbName = 'db_absen_jumat';
 
-
 $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
 
 if ($conn->connect_error) {
@@ -23,28 +22,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($_POST['status'] as $nis => $statusValue) {
 
         if (
-            isset($_POST['nama'][$nis], $_POST['nis'][$nis], $_POST['rayon'][$nis], $_POST['rombel'][$nis], $_POST['tanggal'][$nis])
+            isset($_POST['nama'][$nis], $_POST['nis'][$nis], $_POST['rayon'][$nis], $_POST['rombel'][$nis])
         ) {
 
             $nama = htmlspecialchars($_POST['nama'][$nis]);
             $nis = intval($_POST['nis'][$nis]);
             $rayon = htmlspecialchars($_POST['rayon'][$nis]);
             $rombel = htmlspecialchars($_POST['rombel'][$nis]);
-            $tanggal = htmlspecialchars($_POST['tanggal'][$nis]);
 
-            $stmt = $conn->prepare("UPDATE rekap SET nama=?, rayon=?, rombel=?, status=?, tanggal=? WHERE nis=?");
+            $stmt = $conn->prepare("UPDATE rekap SET nama=?, rayon=?, rombel=?, status=? WHERE nis=?");
 
             if ($stmt) {
-                $stmt->bind_param("sssssi", $nama, $rayon, $rombel, $statusValue, $tanggal, $nis);
+                $stmt->bind_param("ssssi", $nama, $rayon, $rombel, $statusValue, $nis);
 
                 if ($stmt->execute()) {
                     echo "Data updated successfully for NIS: $nis<br>";
-                    header("Location: dashboard.php");
-                    exit();
                 } else {
                     echo "Error: " . $stmt->error . " for NIS: $nis<br>";
-                    header("Location: dashboard.php");
-                    exit();
                 }
                 $stmt->close();
             } else {
@@ -54,7 +48,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Missing data for NIS: $nis<br>";
         }
     }
+    header("Location: dashboard.php");
+    exit();
 }
 $conn->close();
+?>
 
 

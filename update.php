@@ -195,8 +195,11 @@ if (isset($_POST['search_button'])) {
     <?php
     echo '<form action="updateFunc.php" method="POST">';
     while ($row = $result->fetch_assoc()) {
-        $tanggalQuery = "SELECT tanggal FROM rekap WHERE nis = '" . $row['nis'] . "'";
-        $tanggalResult = $conn->query($tanggalQuery);
+        $tanggalQuery = "SELECT tanggal FROM rekap WHERE nis = ?";
+        $stmt = $conn->prepare($tanggalQuery);
+        $stmt->bind_param("i", $row['nis']);
+        $stmt->execute();
+        $tanggalResult = $stmt->get_result();
 
         if ($tanggalResult->num_rows === 1) {
             $tanggalRow = $tanggalResult->fetch_assoc();
@@ -210,15 +213,14 @@ if (isset($_POST['search_button'])) {
         echo '<td class="px-6 py-4"><input type="number" name="nis[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['nis'] . '"/></td>';
         echo '<td class="px-6 py-4"><input type="text" name="rombel[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['rombel'] . '"/></td>';
         echo '<td class="px-6 py-4"><input type="text" name="rayon[' . $row['nis'] . ']" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['rayon'] . '"/></td>';
-        echo '<input type="hidden" name="tanggal[' . $row['nis'] . ']" id="tanggal" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $tanggal . '"/>';
         echo '<td class="px-6 py-4">';
         echo '<div class="flex items-center h-5">';
 
-        $hadirChecked = ($row['status'] === 'hadir') ? 'checked' : '';
-        $tidakHadirChecked = ($row['status'] === 'tidak-hadir') ? 'checked' : '';
+        $hadirChecked = ($row['status'] === 'Hadir') ? 'checked' : '';
+        $tidakHadirChecked = ($row['status'] === 'Tidak Hadir') ? 'checked' : '';
 
-        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="hadir" class="w-4 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $hadirChecked . '> Hadir';
-        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="tidak-hadir" class="w-4 ml-5 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $tidakHadirChecked . '> Tidak Hadir';
+        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="Hadir" class="w-4 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $hadirChecked . '> Hadir';
+        echo '<input type="radio" name="status[' . $row['nis'] . ']" value="Tidak Hadir" class="w-4 ml-5 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $tidakHadirChecked . '> Tidak Hadir';
         echo '</div>';
         echo '</td>';
         echo '</tr>';
