@@ -29,16 +29,23 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .button-container {
+                text-align: right;
+        }
     </style>
 </head>
 <body>
-
-<div class="relative overflow-x-auto">
+<div class="container"></div>
+<h1 class="text-3xl font-semibold text-center mb-4">ABSEN SOLAT JUMAT</h1>
+    <div class="relative overflow-x-auto">
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-            <button class="btn-green">Tombol Hijau</button>
-            <button class="btn-red">Tombol Merah</button>
+        <div class="button-container">
+            <button class="btn-green">siswa hadir</button>
+            <button class="btn-red">siswa tidak hadir</button>
+        </div>
+</div>
                 <th scope="col" class="px-6 py-3">
                     Product name
                 </th>
@@ -98,7 +105,7 @@
             </tr>
         </tbody>
     </table>
-</div>
+    </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </body>
