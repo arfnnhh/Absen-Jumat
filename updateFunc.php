@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -24,7 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (
             isset($_POST['nama'][$nis], $_POST['nis'][$nis], $_POST['rayon'][$nis], $_POST['rombel'][$nis])
         ) {
-
             $nama = htmlspecialchars($_POST['nama'][$nis]);
             $nis = intval($_POST['nis'][$nis]);
             $rayon = htmlspecialchars($_POST['rayon'][$nis]);
@@ -52,6 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 $conn->close();
-?>
+
 
 
