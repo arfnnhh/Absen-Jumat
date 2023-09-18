@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `rekap` (
     status VARCHAR(20),
     tanggal DATE
 );
-
+# insert
 INSERT INTO `siswa` (nama,nis, rayon,rombel) VALUES ('Azhar Muzakki', 12309555,'Wik-1', 'TJKT-X-3'),
                                                     ('Molldy Apriansyah', 12309555,'Wik-1', 'DKV-X-2'),
                                                     ('Syahrur Ramadhan', 12310084,'Wik-1', 'TJKT-X-1'),
