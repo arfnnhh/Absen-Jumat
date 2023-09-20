@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['username'] = $row['nama'];
             $_SESSION['rayon'] = $row['rayon'];
+            $_SESSION['success_login_message'] = "Login berhasil!";
             header("Location: dashboard.php");
             exit();
         } else {

@@ -36,6 +36,11 @@ if ($userLevelResult->num_rows === 1) {
     $userLevel = $userRow['level'];
 }
 
+if ($userLevel < 2) {
+    header("Location: dashboard.php");
+    exit();
+}
+
 if ($userNameResult->num_rows === 1) {
     $userRow = $userNameResult->fetch_assoc();
     $userName = $userRow['nama'];
@@ -65,7 +70,6 @@ if ($userRayonResult->num_rows === 1) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
 </head>
 <body class="bg-gray-900">
-
 <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
@@ -76,7 +80,7 @@ if ($userRayonResult->num_rows === 1) {
                         <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
                     </svg>
                 </button>
-                    <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Halo, <?= $userName ?></span>
+                <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Halo, <?= $userName ?></span>
             </div>
         </div>
     </div>
@@ -143,118 +147,63 @@ if ($userRayonResult->num_rows === 1) {
 <div class="p-4 sm:ml-64">
     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
         <div class="overflow-x-auto">
-                <!-- Alert Login -->
+            <form action="add.php" method="POST">
+            <table class="w-full text-s text-left text-gray-600 dark:text-gray-400 table auto">
+                <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        NIS
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Rombel
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Rayon
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Kehadiran
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
                 <?php
-                if (isset($_SESSION['success_login_message'])) {
-                    echo '<div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-                                <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                                </svg>
-                                <span class="sr-only">Info</span>
-                            <div class="ml-3 text-sm font-medium">
-                                Selamat datang, ' . $userName . '
-                            </div>
-                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
-                                <span class="sr-only">Close</span>
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                                </svg>
-                            </button>
-                            </div>';
-                    unset($_SESSION['success_login_message']);
+                while ($row = $result->fetch_assoc()) {
+                    $nis = $row['nis'];
+                    $namaField = "nama[$nis]";
+                    $rombelField = "rombel[$nis]";
+                    $rayonField = "rayon[$nis]";
+                    $statusField = "status[$nis]";
+
+                    $hadirChecked = ($row['status'] === 'Hadir') ? 'checked' : '';
+                    $tidakHadirChecked = ($row['status'] === 'Tidak Hadir') ? 'checked' : '';
+
+                    echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">';
+                    echo '<td class="px-6 py-4"><input type="text" name="' . $namaField . '" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['nama'] . '"/></td>';
+                    echo '<td class="px-6 py-4"><input type="number" name="' . $nis . '" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['nis'] . '"/></td>';
+                    echo '<td class="px-6 py-4"><input type="text" name="' . $rombelField . '" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['rombel'] . '"/></td>';
+                    echo '<td class="px-6 py-4"><input type="text" name="' . $rayonField . '" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="' . $row['rayon'] . '"/></td>';
+                    echo '<td class="px-6 py-4">';
+                    echo '<div class="flex items-center h-5">';
+                    echo '<input type="radio" name="' . $statusField . '" value="Hadir" class="w-4 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $hadirChecked . '> Hadir';
+                    echo '<input type="radio" name="' . $statusField . '" value="Tidak Hadir" class="w-4 ml-5 mr-2 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required ' . $tidakHadirChecked . '> Tidak Hadir';
+                    echo '</div>';
+                    echo '</td>';
+                    echo '</tr>';
                 }
                 ?>
-                <!-- Alert Login -->
-
-                <!-- Alert Add data-->
-                <?php
-                if (isset($_SESSION['success_add_message'])) {
-                    echo '<div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-                        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                        </svg>
-                        <span class="sr-only">Info</span>
-                        <div class="ml-3 text-sm font-medium">
-                            Absen berhasil di rekap!
-                        </div>
-                        <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
-                            <span class="sr-only">Close</span>
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                        </button>
-                    </div>';
-                    unset($_SESSION['success_add_message']);
-                }
-                ?>
-                <!-- Alert Add data-->
-
-                <!-- Alert Update data-->
-                <?php
-                if (isset($_SESSION['success_update_message'])) {
-                    echo '<div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-                            <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                            </svg>
-                            <span class="sr-only">Info</span>
-                            <div class="ml-3 text-sm font-medium">
-                                Absen berhasil di rubah!
-                            </div>
-                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
-                                <span class="sr-only">Close</span>
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                                </svg>
-                            </button>
-                        </div>';
-                    unset($_SESSION['success_update_message']);
-                }
-                ?>
-                <!-- Alert Update data-->
-
-                <table class="w-full text-s text-left text-gray-600 dark:text-gray-400 table auto rounded-lg">
-                    <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">
-                            Name
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            NIS
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Rombel
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Rayon
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Kehadiran
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    while ($row = $result->fetch_assoc()) {
-                        echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">';
-                        echo '<td class="px-6 py-4">' . $row['nama'] . '</td>';
-                        echo '<td class="px-6 py-4">' . $row['nis'] . '</td>';
-                        echo '<td class="px-6 py-4">' . $row['rayon'] . '</td>';
-                        echo '<td class="px-6 py-4">' . $row['rombel'] . '</td>';
-                        echo '<td class="px-6 py-4">
-                        <a href="view.php?nis=' . $row['nis'] . '">
-                            <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                                Lihat Kehadiran
-                            </button>
-                        </a>
-                        </td>';
-                        echo '</tr>';
-                    }
-                    ?>
-                    </tbody>
-                </table>
+                </tbody>
+            </table>
+            <input type="submit" class="float-right mt-3 text-white ml-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" required value="Tambah Rekap">
+            </form>
         </div>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </body>
 </html>
+
+
+
